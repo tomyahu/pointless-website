@@ -1,9 +1,21 @@
 import express from "express";
 import crypto from "crypto";
 import { uid } from "../lib.js";
-import { SECRET, session_IDs } from "../config.js";
+import { SECRET, session_IDs, MONGODB_URI } from "../config.js";
+import { MongoClient } from 'mongodb';
 
 const router = express.Router();
+
+let db_connection
+console.log("connecting");
+await MongoClient.connect( MONGODB_URI ).then( client => {
+	console.log("connected");
+	db_connection = client.db();
+} )
+.catch( err => {
+	console.log(err)
+} )
+
 
 router.get( '/', (request, response) => {
 	try {
@@ -56,14 +68,24 @@ router.post( '/', (request, response) => {
 			});
 		}
 
-		return response.status(200).send({
-			message: "Creating user functionality pending",
-			userdata : {
-				user: request.body.user,
-				pass: crypto.createHmac( 'sha256', SECRET ).update( request.body.pass ).digest( 'hex' ),
-			},
-		});
+		db_connection.collection( "users" ).findOne({ username: request.body.user }).then( user => {
+			if( user ) {
+				return response.status(406).send({
+					message: "There already exists a user by that name.",
+				});
+			}
 
+			let user_data = {
+				username: request.body.user,
+				pass: crypto.createHmac( 'sha256', SECRET ).update( request.body.pass ).digest( 'hex' ),
+			}
+			db_connection.collection( "users" ).insertOne( user_data );
+			
+			return response.status(200).send({
+				message: "User successfully created",
+				userdata : user_data,
+			});
+		})
 	} catch (error) {
 		console.log( error.message );
 		response.status(500).send( error.message );
