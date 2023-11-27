@@ -1,0 +1,20 @@
+.App {
+	margin: auto;
+	background-color: #c2c2c2;
+	max-width: 500px;
+	padding: 20px;
+}
+
+form>* {
+	display: block;
+	margin: auto;
+}
+
+input {
+	width: 100%;
+	box-sizing:border-box
+}
+
+label {
+	display: block;
+}
