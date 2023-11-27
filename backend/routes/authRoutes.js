@@ -29,26 +29,41 @@ router.get( '/', (request, response) => {
 		}
 
 		// TODO:
-		// If the user is rejected display an error message
+		db_connection.collection( "users" ).findOne({ username: request.body.user }).then( user => {
+			if( ! user ) {
+				return response.status(404).send({
+					message: "Wrong User or Password.",
+				});
+			}
 
-		// generate unique id
-		let session_id = uid();
-		while( session_IDs[session_id] )
-			session_id = uid();
+			let hash = crypto.createHmac( 'sha256', SECRET ).update( request.body.pass ).digest( 'hex' );
+			if( hash != user.pass ) {
+				return response.status(404).send({
+					message: "Wrong User or Password.",
+				});
+			}
 
-		// create user object
-		let user = {
-			user: request.body.user,
-			session_id: session_id,
-			last_activity: Date.now(),
-		}
+			// generate unique id
+			let session_id = uid();
+			while( session_IDs[session_id] )
+				session_id = uid();
 
-		session_IDs[session_id] = user;
+			// create user object
+			let user_data = {
+				user: request.body.user,
+				session_id: session_id,
+				last_activity: Date.now(),
+			}
 
-		return response.status(200).send({
-			message: "Need to check if the user is accepted or rejected",
-			userdata : user,
-		});
+			session_IDs[session_id] = user_data;
+
+			return response.status(200).send({
+				message: "Successfully logged in!",
+				session_id : session_id,
+			});
+
+
+		})
 
 	} catch (error) {
 		console.log( error.message );

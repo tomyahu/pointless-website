@@ -1,29 +1,30 @@
 import express from "express";
-import { session_IDs } from "../config";
+import { session_IDs } from "../config.js";
 
 const router = express.Router();
 
 router.get( '/', (request, response) => {
 	try {
 		if( 
-			!request.body.user ||
 			!request.body.session_id
 		) {
 			return response.status(400).send( {
-				message: "Please send the user and session id."
+				message: "Please send the session id."
 			});
 		}
 
-		let session_id = request.body.session_IDs;
-		let user = request.body.user;
-		if( session_IDs[ session_id ] && session_IDs[ session_IDs ][ 'user' ] == user ) {
+		let session_id = request.body.session_id;
+		let sessiondata = session_IDs[ session_id ];
+		if( sessiondata && sessiondata.user ) {
+			sessiondata[ 'last_activity' ] = Date.now();
+
 			return response.status(200).send(
-				session_IDs[ session_id ],
+				sessiondata,
 			);
 		
 		} else {
-			return response.status(401).send( {
-				message: "Unauthorized access.",
+			return response.status(404).send( {
+				message: "Invalid or expired session ID.",
 			});
 		}
 
