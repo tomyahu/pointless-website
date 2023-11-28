@@ -1,9 +1,9 @@
 import express from "express";
-import { session_IDs } from "../config.js";
+import { session_IDs } from "../global.js";
 
 const router = express.Router();
 
-router.get( '/', (request, response) => {
+router.post( '/', (request, response) => {
 	try {
 		if( 
 			!request.body.session_id

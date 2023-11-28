@@ -1,7 +1,8 @@
 import express from "express";
 import crypto from "crypto";
 import { uid } from "../lib.js";
-import { SECRET, session_IDs, MONGODB_URI } from "../config.js";
+import { SECRET, MONGODB_URI } from "../config.js";
+import { session_IDs } from "../global.js";
 import { MongoClient } from 'mongodb';
 
 const router = express.Router();
@@ -17,7 +18,7 @@ await MongoClient.connect( MONGODB_URI ).then( client => {
 } )
 
 
-router.get( '/', (request, response) => {
+router.post( '/', (request, response) => {
 	try {
 		if( 
 			!request.body.user ||
@@ -72,7 +73,7 @@ router.get( '/', (request, response) => {
 } )
 
 
-router.post( '/', (request, response) => {
+router.post( '/register', (request, response) => {
 	try {
 		if( 
 			!request.body.user ||
