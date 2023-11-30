@@ -1,0 +1,28 @@
+.navbar {
+	background-color: #ff9933;
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.logo {
+	color: #fff;
+}
+
+.navbar-left {
+	display: flex;
+	justify-content: flex-start;
+}
+
+.navbar-right {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	padding-right: 10px;
+	margin: 10px 0;
+	color: #fff;
+}
+
+.navbar-right>* {
+	margin: auto;
+}
