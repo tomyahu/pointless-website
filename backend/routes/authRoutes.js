@@ -32,14 +32,14 @@ router.post( '/', (request, response) => {
 		// TODO:
 		db_connection.collection( "users" ).findOne({ username: request.body.user }).then( user => {
 			if( ! user ) {
-				return response.status(404).send({
+				return response.status(401).send({
 					message: "Wrong User or Password.",
 				});
 			}
 
 			let hash = crypto.createHmac( 'sha256', SECRET ).update( request.body.pass ).digest( 'hex' );
 			if( hash != user.pass ) {
-				return response.status(404).send({
+				return response.status(401).send({
 					message: "Wrong User or Password.",
 				});
 			}
@@ -105,6 +105,33 @@ router.post( '/register', (request, response) => {
 	} catch (error) {
 		console.log( error.message );
 		response.status(500).send( error.message );
+	}
+} )
+
+
+router.post( '/logout', (request, response) => {
+	try {
+		if( !request.body.session_id ) {
+			return response.status(400).send( {
+				message: "No session ID given."
+			});
+		}
+
+		if( ! session_IDs[request.body.session_id] ) {
+			return response.status(400).send( {
+				message: "No session associated to session ID."
+			});
+		}
+
+		delete session_IDs[request.body.session_id];
+		return response.status(200).send( {
+			message: "Logged out successfully."
+		});
+	} catch ( error ) {
+		console.log( error )
+		return response.status(500).send( {
+			message: error
+		});
 	}
 } )
 
