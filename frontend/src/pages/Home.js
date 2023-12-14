@@ -24,7 +24,8 @@ const Home = () => {
 			setLastActivity( response.data.last_activity );
 		})
 		.catch( ( error ) => {
-			console.log( error )
+			navigate( '/' );
+			console.log( error );
 		})
 
 	}, [session_id])

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import '../css/global.css';
 import '../css/login.css';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 
 const LoginForm = () => {
@@ -54,6 +54,11 @@ const LoginForm = () => {
 			</div>
 
 			<button type="submit" onClick={login}>Send</button>
+
+			<div>
+				<Link to={'register'}>Don't have and account???? Register now!!</Link>
+			</div>
+
 		</div>
 	)
 }
